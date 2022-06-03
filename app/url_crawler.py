@@ -27,6 +27,7 @@ class CrawlerMachine:
         '''
         # reinitialize the set
         self.urls_set = set()
+        message = "initialized"
 
         # verify if user inserted http:// or https:// in url
         if HTTPS_PREFIX in search_url:

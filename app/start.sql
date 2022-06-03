@@ -1,10 +1,6 @@
 
 CREATE DATABASE urls_db;
 
-CREATE USER ‘user1’@’localhost’ IDENTIFIED BY ‘passd13’;
-GRANT ALL PRIVILEGES ON urls_db.* TO ‘user1’@’localhost’;
-
-
 USE urls_db;
 
 CREATE TABLE urls (

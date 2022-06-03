@@ -86,7 +86,8 @@ async def post_url(url: str, background_tasks: BackgroundTasks):
         try:
             dict_return = CrawlerMach.find_urls(url)
             urls_set = dict_return['urls_set']
-            #background_tasks.add(start_crawler,initial_url,urls_set)
+
+            background_tasks.add_task(start_crawler,url,urls_set)
             print(dict_return)
             if dict_return['message'] == MSG_OK:
                 urls_set = dict_return['urls_set']

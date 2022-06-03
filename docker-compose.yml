@@ -3,13 +3,21 @@ version: '3.8'
 services:
  mysqldb:
   image: mysql
+  build:
+    context: .
+    dockerfile: Dockerfile_SQL
   ports:
   - 3306:3306
   environment:
-  - MYSQL_ROOT_PASSWORD=weakroots1
+   MYSQL_DATABASE: urls_db
+   MYSQL_USER: root
+   MYSQL_ROOT_PASSWORD: root
   volumes:
   - mysql:/var/lib/mysql
   - mysql_config:/etc/mysql
+  tty: true
+  networks:
+    mysqlnet:
 
  web:
   build:
@@ -26,3 +34,7 @@ services:
 volumes:
   mysql:
   mysql_config:
+
+networks:
+  mysqlnet:
+    driver: bridge
