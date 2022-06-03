@@ -8,7 +8,6 @@ COPY ./app /app
 WORKDIR /app
 EXPOSE 80
 EXPOSE 80
-CMD ["mysql", "-h", "hostname", "-u", "root", "urls_db" ,"<", "/app/app/start.sql"]
 LABEL maintainer="daniel.granuzzo@gmail.com"
 ENTRYPOINT "python" "/app/app/main.py"
 

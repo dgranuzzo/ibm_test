@@ -18,11 +18,11 @@ RECURRENCE_LIMIT = 950
 CrawlerMach = CrawlerMachine()
 
 config = {
-        'server': os.getenv('server'), 
-        'database': os.getenv('database'), 
-        'user': os.getenv('user'), 
-        'password': os.getenv('password'),
-        'port': os.getenv('port'),
+        'server': "localhost", 
+        'database': os.getenv('MYSQL_DATABASE'), 
+        'user': os.getenv('MYSQL_USER'), 
+        'password': os.getenv('MYSQL_ROOT_PASSWORD'),
+        'port': "3306",
         }
 
 SqlDB = MysqlDb(config)
@@ -123,7 +123,6 @@ def read_root():
 @app.get("/create_url_table")
 def create_url_table():
     try:
-        SqlDB.create_database()
         response = SqlDB.create_url_table()
     except Exception as e:
         response = {"status":str(e)}

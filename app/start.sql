@@ -1,5 +1,4 @@
 
-CREATE DATABASE urls_db;
 
 USE urls_db;
 
