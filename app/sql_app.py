@@ -96,6 +96,7 @@ class MysqlDb:
     def exec_sql(self,sql):
         print(sql)
         conn, status = self.connect()
+        print(status)
         if conn != None:
             try:
                 cursor = conn.cursor()

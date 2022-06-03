@@ -19,12 +19,13 @@ CrawlerMach = CrawlerMachine()
 
 config = {
         'server': "localhost", 
-        'database': os.getenv('MYSQL_DATABASE'), 
-        'user': os.getenv('MYSQL_USER'), 
-        'password': os.getenv('MYSQL_ROOT_PASSWORD'),
+        'database': os.getenv('database'), 
+        'user': os.getenv('user'), 
+        'password': os.getenv('password'),
         'port': "3306",
         }
 
+print(config)
 SqlDB = MysqlDb(config)
 
 def recurring_call(urls_set,results,count):

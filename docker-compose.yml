@@ -10,8 +10,9 @@ services:
   - 3306:3306
   environment:
    MYSQL_DATABASE: urls_db
-   MYSQL_USER: root
-   MYSQL_ROOT_PASSWORD: root
+   MYSQL_USER: someuser
+   MYSQL_PASSWORD: somepassword
+   MYSQL_RANDOM_ROOT_PASSWORD: one
   volumes:
   - mysql:/var/lib/mysql
   - mysql_config:/etc/mysql
