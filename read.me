@@ -1,0 +1,20 @@
+
+Python crawler to scrap a url, get its urls and save in MySQL.
+
+To run it using docker (docker desktop on Windows):
+# https://www.docker.com/products/docker-desktop/
+
+
+$ git clone https://github.com/dgranuzzo/ibm_test.git
+$ cd ibm_test
+
+# create volumes:
+$ docker volume create mysql
+$ docker volume create mysql_config
+
+# create mysqlnet
+$ docker network create mysqlnet
+$ docker-compose build
+$ docker-compose up -d
+
+
