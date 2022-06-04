@@ -47,7 +47,9 @@ def recurring_call(urls_set,results,count):
                 # after that url is searched for new urls, its appended to results
             results.append(url)
             count+=1
+            print("count: {} , urls_set: {}".format(count,len(urls_set)))
 
+        print("count: {}".format(count))
         # exclude urls found in other pages to avoid duplicates
         only_new_urls_set = new_urls_set.difference(urls_set)
         # when urls_set is over, call function again with new set of urls
@@ -68,6 +70,7 @@ def start_crawler(initial_url,urls_set):
     """
     count = 0
     results = []
+    # recurring call
     urls_to_save_list = recurring_call(urls_set, results, count)
 
     # save in database array of values (initial_url, found_url)
@@ -110,6 +113,11 @@ def get_url():
     return {"response": "send your url via post"}
 
 
+@app.post("/url_results")
+def get_url_results(url: str):
+    results = MysqlDb.get_urls(url)
+    return {"results": results}
+
 @app.get("/all_urls")
 def get_url():
     all_data = SqlDB.get_all()
@@ -128,7 +136,6 @@ def create_url_table():
     except Exception as e:
         response = {"status":str(e)}
     return response
-
 
 
 if __name__=='__main__':

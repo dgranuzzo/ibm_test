@@ -1,6 +1,8 @@
 
 FROM mysql
-COPY ./app/start.sql /docker-entrypoint-initdb.d/
+ENV TERM xterm
+EXPOSE 3306
+COPY ./mysql_file/start.sql /docker-entrypoint-initdb.d/
 
 
 
