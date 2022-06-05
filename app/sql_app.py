@@ -22,7 +22,8 @@ class MysqlDb:
                                          host = self.host,
                                          port = self.port,
                                          user = self.user,
-                                         passwd = self.passwd)
+                                         passwd = self.passwd,
+                                         auth_plugin='mysql_native_password')
             return connection, "ok"
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:

@@ -13,12 +13,14 @@ from messages import  *
 load_dotenv()
 app = FastAPI()
 
-RECURRENCE_LIMIT = 950
+RECURRENCE_LIMIT = 50
 
 CrawlerMach = CrawlerMachine()
 
+# any service can reach any other service at that service’s name. 
+# In the following example, db is reachable from web at the hostnames db
 config = {
-        'server': "localhost", 
+        'server': "mysqldb", 
         'database': os.getenv('database'), 
         'user': os.getenv('user'), 
         'password': os.getenv('password'),
@@ -38,8 +40,8 @@ def recurring_call(urls_set,results,count):
     """
     # new set for this call of function
     new_urls_set = set()
-    while count < RECURRENCE_LIMIT:
-        for url in urls_set:
+    #while count < RECURRENCE_LIMIT:
+    for url in urls_set:
             dict_return = CrawlerMach.find_urls(url)
             # include new results in new_urls_set
             if dict_return['message'] == MSG_OK:
@@ -49,11 +51,11 @@ def recurring_call(urls_set,results,count):
             count+=1
             print("count: {} , urls_set: {}".format(count,len(urls_set)))
 
-        print("count: {}".format(count))
-        # exclude urls found in other pages to avoid duplicates
-        only_new_urls_set = new_urls_set.difference(urls_set)
-        # when urls_set is over, call function again with new set of urls
-        recurring_call(only_new_urls_set,results,count)
+            print("count: {}".format(count))
+            # exclude urls found in other pages to avoid duplicates
+            only_new_urls_set = new_urls_set.difference(urls_set)
+            # when urls_set is over, call function again with new set of urls
+            #recurring_call(only_new_urls_set,results,count)
     
     # return when all urls were searched
     # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
@@ -115,7 +117,7 @@ def get_url():
 
 @app.post("/url_results")
 def get_url_results(url: str):
-    results = MysqlDb.get_urls(url)
+    results = SqlDB.get_urls(url)
     return {"results": results}
 
 @app.get("/all_urls")
