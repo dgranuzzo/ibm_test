@@ -69,24 +69,24 @@ class CrawlerMachine:
         return {"status":status,"message":message,"urls_set":self.urls_set}
 
 
-def clean_url_data(self,new_url,search_url):
-    """
-    Treat the new_url to remove undesireble text. Returns the new_url sanitized.
-    (remove get variables from url (text after ?) , include https:// when needed, 
-    include initial_url when url starts with "/")
-
-    Args: new_url (str) , search_url(str)
-
-
-    Returns: new_url (str)
-
-    """
-    # if "?"" in url, remove text from "?", including it
-    if "?" in new_url:
-        new_url = new_url.split("?")[0]
+    def clean_url_data(self,new_url,search_url):
+        """
+        Treat the new_url to remove undesireble text. Returns the new_url sanitized.
+        (remove get variables from url (text after ?) , include https:// when needed, 
+        include initial_url when url starts with "/")
     
-    # if new_url starts with / , includes https://serach_urlnew_url
-    if new_url[0] == "/":
-        new_url = HTTPS_PREFIX + search_url + new_url
+        Args: new_url (str) , search_url(str)
+    
+    
+        Returns: new_url (str)
+    
+        """
+        # if "?"" in url, remove text from "?", including it
+        if "?" in new_url:
+            new_url = new_url.split("?")[0]
         
-    return new_url
+        # if new_url starts with / , includes https://serach_urlnew_url
+        if new_url[0] == "/":
+            new_url = HTTPS_PREFIX + search_url + new_url
+            
+        return new_url
