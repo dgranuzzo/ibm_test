@@ -56,7 +56,7 @@ def recurring_call(urls_set,results,count):
             # exclude urls found in other pages to avoid duplicates
             only_new_urls_set = new_urls_set.difference(urls_set)
             # when urls_set is over, call function again with new set of urls
-            #recurring_call(only_new_urls_set,results,count)
+            recurring_call(only_new_urls_set,results,count)
     
     # return when all urls were searched
     return results
