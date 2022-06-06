@@ -13,7 +13,7 @@ from messages import  *
 load_dotenv()
 app = FastAPI()
 
-RECURRENCE_LIMIT = 50
+RECURRENCE_LIMIT = 200
 HTTPS_PREFIX = "https://"
 
 CrawlerMach = CrawlerMachine()
@@ -41,8 +41,8 @@ def recurring_call(urls_set,results,count):
     """
     # new set for this call of function
     new_urls_set = set()
-    #while count < RECURRENCE_LIMIT:
-    for url in urls_set:
+    while count < RECURRENCE_LIMIT:
+        for url in urls_set:
             dict_return = CrawlerMach.find_urls(url)
             # include new results in new_urls_set
             if dict_return['message'] == MSG_OK:
@@ -51,8 +51,7 @@ def recurring_call(urls_set,results,count):
             results.append(url)
             count+=1
             print("count: {} , urls_set: {}".format(count,len(urls_set)))
-
-            print("count: {}".format(count))
+            print('going for next recurring call: {}'.format(RECURRENCE_LIMIT))
             # exclude urls found in other pages to avoid duplicates
             only_new_urls_set = new_urls_set.difference(urls_set)
             # when urls_set is over, call function again with new set of urls

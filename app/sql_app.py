@@ -63,6 +63,8 @@ class MysqlDb:
                 cursor = conn.cursor()
                 cursor.executemany(sql, values)
                 conn.commit()
+                print(values)
+                print("rows count:".format(cursor.rowcount))
                 return {"status":"ok","rows_count":cursor.rowcount,"message":"ok"}
             except Exception as e:
                 message = str(e)

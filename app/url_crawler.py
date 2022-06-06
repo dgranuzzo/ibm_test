@@ -9,6 +9,7 @@ HTTPS_PREFIX = "https://"
 HTTP_PREFIX = "http://"
 HTTP = "http"
 
+
 class CrawlerMachine:
     def __init__(self):
         """
@@ -43,6 +44,7 @@ class CrawlerMachine:
 
         print(search_url)
         try:
+            # request in the search url:
             response = requests.get(search_url)
         except Exception as e:
             print(str(e))
@@ -59,16 +61,16 @@ class CrawlerMachine:
                 if 'href' in link.attrs:
                     new_url = link.attrs['href']
                     new_url = self.clean_url_data(new_url,search_url)
-                    if "///" in new_url:
+                    if new_url == DO_NOT_INCLUDE_URL:
                         # dont include this one!!!
                         pass
                     else:
-                        self.urls_set.add(link.attrs['href'])
-
+                        self.urls_set.add(new_url)
             message = MSG_OK
-
         elif response.status_code == 403:
             message = MSG_FORBIDEN
+        else:
+            message = "unknown error"
 
         return {"status":status,"message":message,"urls_set":self.urls_set}
 
@@ -85,7 +87,7 @@ class CrawlerMachine:
         Returns: new_url (str)
 
         """
-        if len(new_url)> 3:
+        if len(new_url)> 3 and "///" not in "new_url":
             # if "?"" in url, remove text from "?", including it
             if "?" in new_url:
                 new_url = new_url.split("?")[0]
@@ -93,5 +95,7 @@ class CrawlerMachine:
             # if new_url starts with / , includes https://serach_urlnew_url
             if new_url[0] == "/":
                 new_url = HTTPS_PREFIX + search_url + new_url
+        else:
+            new_url = DO_NOT_INCLUDE_URL
 
         return new_url
