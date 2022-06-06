@@ -14,6 +14,7 @@ load_dotenv()
 app = FastAPI()
 
 RECURRENCE_LIMIT = 50
+HTTPS_PREFIX = "https://"
 
 CrawlerMach = CrawlerMachine()
 
@@ -57,9 +58,11 @@ def recurring_call(urls_set,results,count):
             # when urls_set is over, call function again with new set of urls
             #recurring_call(only_new_urls_set,results,count)
     
+    # clean url data
+
     # return when all urls were searched
-    # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
     return results
+
 
 
 def start_crawler(initial_url,urls_set):
@@ -78,9 +81,17 @@ def start_crawler(initial_url,urls_set):
     # save in database array of values (initial_url, found_url)
     urls_to_save_tuples_list = []
     for url_item in urls_to_save_list:
+        # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
         urls_to_save_tuples_list.append((initial_url,url_item))
-        
-    SqlDB.save_urls(urls_to_save_tuples_list)
+    
+    # print save in databse
+    print("SAVE IN DATABASE:")
+    print(urls_to_save_tuples_list)
+    if len(urls_to_save_tuples_list) > 0:
+        response = SqlDB.save_urls(urls_to_save_tuples_list)
+        print(response)
+    
+    return 1
         
     
 @app.post("/url")

@@ -52,18 +52,21 @@ class MysqlDb:
         data = self.get_data(sql)
         return data
 
-    def save_urls(self,vals):
+    def save_urls(self,values):
         message = "no connection"
-        sql = "INSERT INTO URLS ('initial_url','found_url') VALUES (%s, %s)"
+        sql = """INSERT IGNORE INTO URLS ( initial_url , found_url ) 
+        VALUES (%s, %s)"""
+
         conn, status = self.connect()
         if conn != None:
             try:
                 cursor = conn.cursor()
-                cursor.executemany(sql, vals)
+                cursor.executemany(sql, values)
                 conn.commit()
                 return {"status":"ok","rows_count":cursor.rowcount,"message":"ok"}
             except Exception as e:
                 message = str(e)
+                conn.rollback()
             finally:
                 cursor.close()
                 conn.close()
@@ -95,7 +98,7 @@ class MysqlDb:
 
 
     def exec_sql(self,sql):
-        print(sql)
+        print("exec_sql: {}".format(sql))
         conn, status = self.connect()
         print(status)
         if conn != None:
