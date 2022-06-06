@@ -21,7 +21,7 @@ CrawlerMach = CrawlerMachine()
 # any service can reach any other service at that service’s name. 
 # In the following example, db is reachable from web at the hostnames db
 config = {
-        'server': "mysqldb", 
+        'server': os.getenv('server'), 
         'database': os.getenv('database'), 
         'user': os.getenv('user'), 
         'password': os.getenv('password'),

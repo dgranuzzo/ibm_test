@@ -85,12 +85,13 @@ class CrawlerMachine:
         Returns: new_url (str)
 
         """
-        # if "?"" in url, remove text from "?", including it
-        if "?" in new_url:
-            new_url = new_url.split("?")[0]
+        if len(new_url)> 3:
+            # if "?"" in url, remove text from "?", including it
+            if "?" in new_url:
+                new_url = new_url.split("?")[0]
 
-        # if new_url starts with / , includes https://serach_urlnew_url
-        if new_url[0] == "/":
-            new_url = HTTPS_PREFIX + search_url + new_url
+            # if new_url starts with / , includes https://serach_urlnew_url
+            if new_url[0] == "/":
+                new_url = HTTPS_PREFIX + search_url + new_url
 
         return new_url

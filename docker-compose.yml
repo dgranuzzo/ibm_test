@@ -8,7 +8,7 @@ services:
   ports:
   - 3306:3306
   environment:
-   - MYSQL_DATABASE=urls_db
+   - MYSQL_DATABASE=URLS_DB
    - MYSQL_USER=user1
    - MYSQL_PASSWORD=password1
    - MYSQL_ROOT_PASSWORD=onepass
