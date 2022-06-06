@@ -41,19 +41,26 @@ def recurring_call(urls_set,results,count):
     """
     # new set for this call of function
     new_urls_set = set()
-    while count < RECURRENCE_LIMIT:
-        for url in urls_set:
+    for url in urls_set:
             dict_return = CrawlerMach.find_urls(url)
             # include new results in new_urls_set
             if dict_return['message'] == MSG_OK:
                 new_urls_set = new_urls_set.union(dict_return['urls_set'])
                 # after that url is searched for new urls, its appended to results
             results.append(url)
-            count+=1
+            
             print("count: {} , urls_set: {}".format(count,len(urls_set)))
             print('going for next recurring call: {}'.format(RECURRENCE_LIMIT))
+
             # exclude urls found in other pages to avoid duplicates
             only_new_urls_set = new_urls_set.difference(urls_set)
+            print(only_new_urls_set)
+
+            count+=1
+            # break for loop when count is greater than recurrence limit 
+            if count > RECURRENCE_LIMIT:
+                break
+            
             # when urls_set is over, call function again with new set of urls
             recurring_call(only_new_urls_set,results,count)
     
