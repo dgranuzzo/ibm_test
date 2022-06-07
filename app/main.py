@@ -31,7 +31,7 @@ config = {
 print(config)
 SqlDB = MysqlDb(config)
 
-def recurring_call(initial_url, urls_set,results_set,count=0):
+def recurring_call(initial_url, urls_set, results_set,count=0):
     """
     recurrent function to scrap the urls found. Limits the recurrence to LIMIT (950)
 
@@ -40,32 +40,38 @@ def recurring_call(initial_url, urls_set,results_set,count=0):
     Returns: urls set() of urls found, counter.
     """
     # new set for this call of function
-    if count < RECURRENCE_LIMIT:
-        new_urls_set = set()
-        for url in urls_set:
-                dict_return = CrawlerMach.find_urls(url)
-                # include new results in new_urls_set
-                if dict_return['message'] == MSG_OK:
-                    new_urls_set = new_urls_set.union(dict_return['urls_set'])
+    
+    new_urls_set = set()
+    for url in urls_set:
+        dict_return = CrawlerMach.find_urls(url)
+        # include new results in new_urls_set
+        if dict_return['message'] == MSG_OK:
+            for url_item in dict_return['urls_set']:
+                url_item = CrawlerMach.clean_url(url_item, url)
+                if url_item not in urls_set:
+                    # add only if it is not in urls_set yet
+                    print("ADD URL: {}".format(url_item))
+                    new_urls_set.add(url_item)
                     # after that url is searched for new urls, it is appended to results
-                results_set.add(url)
-                print("====================================================")
-                print("count: {} , urls_set: {}".format(count,len(urls_set)))
-                print('check if going for next recurring call: {}'.format(RECURRENCE_LIMIT))
+                    results_set.add(url)
+        print("====================================================")
+        print("count: {} , urls_set: {}".format(count,len(urls_set)))
+        
+        # exclude urls found in other pages to avoid duplicates
+        #only_new_urls_set = new_urls_set.difference(urls_set)
+        #print(only_new_urls_set)
+        #print("after print news url set")
+        count+=1
+        
+    # when urls_set is over, call function again with new set of urls
+    print('check if going for next recurring call: {}'.format(RECURRENCE_LIMIT))
+    if count < RECURRENCE_LIMIT:
+        print("recurring call ...{}".format(count))
+        recurring_call(initial_url, new_urls_set,results_set,count)
 
-                # exclude urls found in other pages to avoid duplicates
-                only_new_urls_set = new_urls_set.difference(urls_set)
-                print(only_new_urls_set)
 
-                count+=1
-                
-                # when urls_set is over, call function again with new set of urls
-                print("recurring call ...")
-                recurring_call(initial_url, only_new_urls_set,results_set,count)
 
-        print("=== END recurring_call ===")
-        # return when all urls were searched
-
+    print("THE RETURN RECURRING CALL ======")
     return results_set
 
 
