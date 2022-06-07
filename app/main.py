@@ -49,7 +49,7 @@ def recurring_call(initial_url, urls_set,results_set,count=0):
                     new_urls_set = new_urls_set.union(dict_return['urls_set'])
                     # after that url is searched for new urls, it is appended to results
                 results_set.add(url)
-
+                print("====================================================")
                 print("count: {} , urls_set: {}".format(count,len(urls_set)))
                 print('check if going for next recurring call: {}'.format(RECURRENCE_LIMIT))
 

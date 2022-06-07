@@ -32,7 +32,7 @@ class CrawlerMachine:
 
         search_url = str(search_url).strip()
         if not search_url.startswith(HTTP):
-            # nsert "http://" to avoid scheme error 
+            # insert "http://" to avoid scheme error 
             search_url = "http://" + search_url
 
         print(search_url)
@@ -95,10 +95,11 @@ class CrawlerMachine:
             if len(new_url)> 3:
                 if new_url.startswith("http"):
                     pass
-                elif new_url[0] == "/":
-                    new_url = HTTPS_PREFIX + search_url + new_url
+                elif new_url.startswith("/"):
+                    new_url = search_url + new_url
                 else:
                     new_url = HTTP_PREFIX + new_url
+
             else:
                 new_url = DO_NOT_INCLUDE_URL    
         else:
