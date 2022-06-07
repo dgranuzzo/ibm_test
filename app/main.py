@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 
 from url_crawler import CrawlerMachine
-from sql_app import MysqlDb
+from sql_app import SqlDbClass
 import re
 from messages import  * 
 
@@ -25,11 +25,14 @@ config = {
         'database': os.getenv('database'), 
         'user': os.getenv('user'), 
         'password': os.getenv('password'),
-        'port': "3306",
+        'port': os.getenv('port'),
         }
 
 print(config)
-SqlDB = MysqlDb(config)
+SqlDB = SqlDbClass(config)
+resp = SqlDB.create_url_table()
+print("create table:")
+print(resp)
 
 def recurring_call(initial_url, urls_set, results_set,count=0):
     """
@@ -154,15 +157,6 @@ def get_url():
 @app.get("/")
 def read_root():
     return {"response": "try /url"}
-
-
-@app.get("/create_url_table")
-def create_url_table():
-    try:
-        response = SqlDB.create_url_table()
-    except Exception as e:
-        response = {"status":str(e)}
-    return response
 
 
 @app.post("/test_urls_table")

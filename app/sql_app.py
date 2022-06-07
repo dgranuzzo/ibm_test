@@ -4,10 +4,10 @@
 import psycopg2
 
 
-class MysqlDb:
+class SqlDbClass:
     def __init__(self,config):
         """
-        Conect to Mysql
+        Conect to db
         Args:
             config: {'server', 'database', 'user', 'password', 'port'}
         """
@@ -95,38 +95,38 @@ class MysqlDb:
             return {"items":None,"fields":None,"status":status}
 
     def insert_into_urls(self, initial_url,search_url):
-        sql = "insert into URLS ( initial_url ,found_url ) VALUES ({} ,{})".format(initial_url,search_url)
+        sql = "insert into URLS ( initial_url ,found_url ) VALUES ('{}' ,'{}')".format(initial_url,search_url)
         r = self.exec_sql(sql)
         return r
 
     def exec_sql(self,sql):
         print("exec_sql: {}".format(sql))
         conn, status = self.connect()
-        print(status)
+        rows_count = 0
         if conn != None:
             try:
                 cursor = conn.cursor()
                 cursor.execute(sql)
+                rows_count = cursor.rowcount
+                conn.commit()
                 status = "ok"
             except Exception as e:
                 status = str(e)
+                conn.rollback()
             finally:
                 cursor.close()
                 conn.close()
-                return {"status":status}
+                return {"status":status,"rows_count":rows_count}
         else:
-            return {"status":status}
+            return {"status":status,"rows_count":rows_count}
 
 
     def create_url_table(self):
         sql = """
-        CREATE TABLE urls (
-            id int NOT NULL AUTO_INCREMENT,
-            initial_url varchar(500),
-            found_url varchar(500),
-            found_url_searched boolean DEFAULT FALSE,
-            parent_id_url int,
-            PRIMARY KEY (id)
+        CREATE TABLE  IF NOT EXISTS URLS1 (
+            id SERIAL PRIMARY KEY,
+            initial_url TEXT,
+            found_url TEXT
             );
         """
         response = self.exec_sql(sql)

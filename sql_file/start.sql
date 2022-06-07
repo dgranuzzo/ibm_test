@@ -1,15 +1,10 @@
 
 
-
-GRANT ALL PRIVILEGES ON URLS_DB.* TO 'user1'@'localhost';
-GRANT ALL PRIVILEGES ON URLS_DB.* TO 'user1'@'%';
-
-CREATE TABLE URLS_DB.URLS (
-id int NOT NULL AUTO_INCREMENT,
-initial_url varchar(500),
-found_url varchar(500),
-PRIMARY KEY (id)
+CREATE TABLE URLS (
+id SERIAL PRIMARY KEY,
+initial_url TEXT,
+found_url TEXT
 );
 
-INSERT IGNORE INTO URLS ( initial_url , found_url ) 
+INSERT INTO URLS ( initial_url , found_url ) 
         VALUES ('test1', 'test1');
