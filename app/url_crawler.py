@@ -97,6 +97,8 @@ class CrawlerMachine:
                     pass
                 elif new_url.startswith("/"):
                     new_url = search_url + new_url
+                elif new_url.startswith("."):
+                    new_url = DO_NOT_INCLUDE_URL    
                 else:
                     new_url = HTTP_PREFIX + new_url
 

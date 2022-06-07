@@ -63,7 +63,7 @@ class MysqlDb:
                 cursor = conn.cursor()
                 cursor.executemany(sql, values)
                 conn.commit()
-                print(values)
+                #print(values)
                 print("rows count:".format(cursor.rowcount))
                 return {"status":"ok","rows_count":cursor.rowcount,"message":"ok"}
             except Exception as e:
@@ -117,13 +117,6 @@ class MysqlDb:
         else:
             return {"status":status}
 
-
-    def create_database(self):
-        sql = """
-            CREATE DATABASE urls_db;
-        """
-        self.exec_sql(sql)
-        return {"status":"ok"}
 
 
     def create_url_table(self):

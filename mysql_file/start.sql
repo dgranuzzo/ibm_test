@@ -10,3 +10,6 @@ initial_url varchar(500),
 found_url varchar(500),
 PRIMARY KEY (id)
 );
+
+INSERT IGNORE INTO URLS ( initial_url , found_url ) 
+        VALUES ('test1', 'test1');

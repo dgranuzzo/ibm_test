@@ -48,19 +48,18 @@ def recurring_call(initial_url, urls_set, results_set,count=0):
         if dict_return['message'] == MSG_OK:
             for url_item in dict_return['urls_set']:
                 url_item = CrawlerMach.clean_url(url_item, url)
-                if url_item not in urls_set:
-                    # add only if it is not in urls_set yet
+                
+                if url_item not in results_set:
+                    # add only if it is not in results_set yet
+                    # results is cumulative
                     print("ADD URL: {}".format(url_item))
                     new_urls_set.add(url_item)
                     # after that url is searched for new urls, it is appended to results
                     results_set.add(url)
+        
         print("====================================================")
         print("count: {} , urls_set: {}".format(count,len(urls_set)))
         
-        # exclude urls found in other pages to avoid duplicates
-        #only_new_urls_set = new_urls_set.difference(urls_set)
-        #print(only_new_urls_set)
-        #print("after print news url set")
         count+=1
         
     # when urls_set is over, call function again with new set of urls
