@@ -130,5 +130,5 @@ class MysqlDb:
             PRIMARY KEY (id)
             );
         """
-        self.exec_sql(sql)
-        return {"status":"ok"}
+        response = self.exec_sql(sql)
+        return response

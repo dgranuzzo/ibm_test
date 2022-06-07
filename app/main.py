@@ -165,6 +165,11 @@ def create_url_table():
     return response
 
 
+@app.post("/test_urls_table")
+def get_url_results(initial_url: str,search_url:str):
+    results = SqlDB.save_urls(initial_url,search_url)
+    return {"results": results}
+
 if __name__=='__main__':
     print("init main")
     port=80
