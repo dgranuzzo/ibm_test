@@ -103,6 +103,8 @@ def start_crawler(initial_url,urls_set):
     print("SAVE IN DATABASE:")
     print(urls_to_save_tuples_list)
     if len(urls_to_save_tuples_list) > 0:
+        # records_list_template = ','.join(['%s'] * len(data))
+        # insert_query = 'insert into t (a, b) values {}'.format(records_list_template)
         response = SqlDB.save_urls(urls_to_save_tuples_list)
         print(response)
     else:
@@ -157,6 +159,13 @@ def get_url():
 @app.get("/")
 def read_root():
     return {"response": "try /url"}
+
+
+@app.get("/test_save_urls")
+def test_save_urls():
+    values = [('www1', 'www2'), ('wwww4', 'www5'), ('www7', 'www8')]
+    r = SqlDB.save_urls(values)
+    return {"response": r}
 
 
 @app.post("/test_urls_table")

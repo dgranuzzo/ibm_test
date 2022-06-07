@@ -89,6 +89,9 @@ class CrawlerMachine:
                 new_url = new_url.split("#")[0]
             elif "?" in new_url:
                 new_url = new_url.split("?")[0]
+            
+            if "@" in new_url:
+                new_url = new_url.split("@")[0]
 
             # if new_url starts with / , includes https://serach_urlnew_url
             # check len again, after possible len reduction above

@@ -2,6 +2,7 @@
 #import mysql.connector
 #from mysql.connector import errorcode
 import psycopg2
+from psycopg2.extras import execute_values
 
 
 class SqlDbClass:
@@ -50,14 +51,16 @@ class SqlDbClass:
 
     def save_urls(self,values):
         message = "no connection"
-        sql = """INSERT IGNORE INTO URLS ( initial_url , found_url ) 
-        VALUES (%s, %s)"""
+        #sql = """INSERT INTO URLS (initial_url ,found_url) VALUES (%s, %s)"""
+        # values format: [(1, 2), (4, 5), (7, 8)]
+        sql = "INSERT INTO URLS (initial_url ,found_url) VALUES %s"
 
         conn, status = self.connect()
         if conn != None:
             try:
                 cursor = conn.cursor()
-                cursor.executemany(sql, values)
+                #cursor.executemany(sql, values)
+                execute_values(cursor,sql, values)
                 conn.commit()
                 #print(values)
                 print("rows count:".format(cursor.rowcount))
