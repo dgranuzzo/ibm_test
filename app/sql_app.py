@@ -98,6 +98,10 @@ class MysqlDb:
         else:
             return {"items":None,"fields":None,"status":status}
 
+    def insert_into_urls(self, initial_url,search_url):
+        sql = "insert into URLS ( initial_url ,found_url ) VALUES ({} ,{})".format(initial_url,search_url)
+        r = self.exec_sql(sql)
+        return r
 
     def exec_sql(self,sql):
         print("exec_sql: {}".format(sql))
@@ -116,7 +120,6 @@ class MysqlDb:
                 return {"status":status}
         else:
             return {"status":status}
-
 
 
     def create_url_table(self):
