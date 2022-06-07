@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+ mysqldb:
+  build:
+   context: . #build the image for the web service from the dockerfile in parent directory
+   dockerfile: Dockerfile_SQL
+  ports:
+  - 3306:3306
+  environment:
+   - MYSQL_DATABASE=urls_db
+   - MYSQL_USER=user1
+   - MYSQL_PASSWORD=password1
+   - MYSQL_ROOT_PASSWORD=onepass
+  volumes:
+  - mysql:/var/lib/mysql
+  - mysql_config:/etc/mysql
+  - ./mysql_local.cnf:/etc/mysql/conf.d/mysql_local.cnf:ro
+  networks:
+    mysqlnet:
+
+ web:
+  build:
+   context: . #build the image for the web service from the dockerfile in parent directory
+   dockerfile: Dockerfile
+  ports:
+  - 80:80
+  depends_on:
+      - mysqldb
+  restart: "on-failure"
+  links:
+      - mysqldb 
+  volumes:
+  - ./:/app # map data & files from parent directory in host to microservice directory in docker container
+  networks:
+    mysqlnet:
+
+volumes:
+  mysql:
+  mysql_config:
+
+networks:
+  mysqlnet:
+    driver: bridge

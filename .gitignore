@@ -2,3 +2,4 @@ __pycache__
 comands.me
 .env
 .pytest_cache
+xxx*

@@ -1,6 +1,7 @@
 #coding: utf-8
-import mysql.connector
-from mysql.connector import errorcode
+#import mysql.connector
+#from mysql.connector import errorcode
+import psycopg2
 
 
 class MysqlDb:
@@ -18,20 +19,15 @@ class MysqlDb:
     
     def connect(self):
         try:
-            connection = mysql.connector.connect(database = self.db,
-                                         host = self.host,
-                                         port = self.port,
-                                         user = self.user,
-                                         passwd = self.passwd,
-                                         auth_plugin='mysql_native_password')
+            connection = psycopg2.connect(database = self.db,
+                                    user = self.user,
+                                    password = self.passwd,
+                                    host = self.host,
+                                    port = self.port)
+             
             return connection, "ok"
-        except mysql.connector.Error as err:
-            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                msg = "invalid DB user or pass"
-            elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                msg = "invalid DB"
-            else:
-                msg = err
+        except Exception as e:
+            msg = str(e)
             return None, msg
    
 
