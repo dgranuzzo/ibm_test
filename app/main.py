@@ -13,7 +13,7 @@ from messages import  *
 load_dotenv()
 app = FastAPI()
 
-RECURRENCE_LIMIT = 200
+RECURRENCE_LIMIT = 20
 HTTPS_PREFIX = "https://"
 
 CrawlerMach = CrawlerMachine()
@@ -31,7 +31,7 @@ config = {
 print(config)
 SqlDB = MysqlDb(config)
 
-def recurring_call(urls_set,results,count):
+def recurring_call(initial_url, urls_set,results_set,count=0):
     """
     recurrent function to scrap the urls found. Limits the recurrence to LIMIT (950)
 
@@ -40,32 +40,33 @@ def recurring_call(urls_set,results,count):
     Returns: urls set() of urls found, counter.
     """
     # new set for this call of function
-    new_urls_set = set()
-    for url in urls_set:
-            dict_return = CrawlerMach.find_urls(url)
-            # include new results in new_urls_set
-            if dict_return['message'] == MSG_OK:
-                new_urls_set = new_urls_set.union(dict_return['urls_set'])
-                # after that url is searched for new urls, its appended to results
-            results.append(url)
-            
-            print("count: {} , urls_set: {}".format(count,len(urls_set)))
-            print('going for next recurring call: {}'.format(RECURRENCE_LIMIT))
+    if count < RECURRENCE_LIMIT:
+        new_urls_set = set()
+        for url in urls_set:
+                dict_return = CrawlerMach.find_urls(url)
+                # include new results in new_urls_set
+                if dict_return['message'] == MSG_OK:
+                    new_urls_set = new_urls_set.union(dict_return['urls_set'])
+                    # after that url is searched for new urls, it is appended to results
+                results_set.add(url)
 
-            # exclude urls found in other pages to avoid duplicates
-            only_new_urls_set = new_urls_set.difference(urls_set)
-            print(only_new_urls_set)
+                print("count: {} , urls_set: {}".format(count,len(urls_set)))
+                print('check if going for next recurring call: {}'.format(RECURRENCE_LIMIT))
 
-            count+=1
-            # break for loop when count is greater than recurrence limit 
-            if count > RECURRENCE_LIMIT:
-                break
-            
-            # when urls_set is over, call function again with new set of urls
-            recurring_call(only_new_urls_set,results,count)
-    
-    # return when all urls were searched
-    return results
+                # exclude urls found in other pages to avoid duplicates
+                only_new_urls_set = new_urls_set.difference(urls_set)
+                print(only_new_urls_set)
+
+                count+=1
+                
+                # when urls_set is over, call function again with new set of urls
+                print("recurring call ...")
+                recurring_call(initial_url, only_new_urls_set,results_set,count)
+
+        print("=== END recurring_call ===")
+        # return when all urls were searched
+
+    return results_set
 
 
 
@@ -77,14 +78,16 @@ def start_crawler(initial_url,urls_set):
 
     Returns: None
     """
+    print("1. start crawler =====")
     count = 0
-    results = []
+    results_set = set()
     # recurring call
-    urls_to_save_list = recurring_call(urls_set, results, count)
+    urls_to_save_set = recurring_call(initial_url, urls_set, results_set, count)
 
+    print("=== 2. urls to save tuple ===")
     # save in database array of values (initial_url, found_url)
     urls_to_save_tuples_list = []
-    for url_item in urls_to_save_list:
+    for url_item in urls_to_save_set:
         # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
         urls_to_save_tuples_list.append((initial_url,url_item))
     
@@ -94,8 +97,8 @@ def start_crawler(initial_url,urls_set):
     if len(urls_to_save_tuples_list) > 0:
         response = SqlDB.save_urls(urls_to_save_tuples_list)
         print(response)
-    
-    return 1
+    else:
+        print("len problem: {}".format(len(urls_to_save_tuples_list)))
         
     
 @app.post("/url")
@@ -108,7 +111,9 @@ async def post_url(url: str, background_tasks: BackgroundTasks):
             dict_return = CrawlerMach.find_urls(url)
             urls_set = dict_return['urls_set']
 
-            background_tasks.add_task(start_crawler,url,urls_set)
+            #background_tasks.add_task(start_crawler,url,urls_set)
+            start_crawler(url,urls_set)
+            print("**** return start_crawler: ****")
             print(dict_return)
             if dict_return['message'] == MSG_OK:
                 urls_set = dict_return['urls_set']

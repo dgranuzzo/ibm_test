@@ -30,17 +30,10 @@ class CrawlerMachine:
         self.urls_set = set()
         message = "initialized"
 
-        # verify if user inserted http:// or https:// in url
-        if HTTPS_PREFIX in search_url:
-            #ok, pass
-            pass
-        elif HTTP_PREFIX in search_url:
-            #ok, pass
-            pass
-        else:
-            # insert https:// to avoid invalid schema error
-            # it does not correct if the user types http:\\ 
-            search_url = HTTPS_PREFIX + search_url
+        search_url = str(search_url).strip()
+        if not search_url.startswith(HTTP):
+            # nsert "http://" to avoid scheme error 
+            search_url = "http://" + search_url
 
         print(search_url)
         try:
@@ -60,7 +53,7 @@ class CrawlerMachine:
             for link in bs.find_all('a'):
                 if 'href' in link.attrs:
                     new_url = link.attrs['href']
-                    new_url = self.clean_url_data(new_url,search_url)
+                    new_url = self.clean_url(new_url,search_url)
                     if new_url == DO_NOT_INCLUDE_URL:
                         # dont include this one!!!
                         pass
@@ -75,7 +68,7 @@ class CrawlerMachine:
         return {"status":status,"message":message,"urls_set":self.urls_set}
 
 
-    def clean_url_data(self,new_url,search_url):
+    def clean_url(self,new_url,search_url=""):
         """
         Treat the new_url to remove undesireble text. Returns the new_url sanitized.
         (remove get variables from url (text after ?) , include https:// when needed, 
@@ -87,14 +80,27 @@ class CrawlerMachine:
         Returns: new_url (str)
 
         """
+        new_url = new_url.strip()
+        print(new_url)
         if len(new_url)> 3 and "///" not in "new_url":
             # if "?"" in url, remove text from "?", including it
-            if "?" in new_url:
+            
+            if "#" in new_url:
+                new_url = new_url.split("#")[0]
+            elif "?" in new_url:
                 new_url = new_url.split("?")[0]
 
             # if new_url starts with / , includes https://serach_urlnew_url
-            if new_url[0] == "/":
-                new_url = HTTPS_PREFIX + search_url + new_url
+            # check len again, after possible len reduction above
+            if len(new_url)> 3:
+                if new_url.startswith("http"):
+                    pass
+                elif new_url[0] == "/":
+                    new_url = HTTPS_PREFIX + search_url + new_url
+                else:
+                    new_url = HTTP_PREFIX + new_url
+            else:
+                new_url = DO_NOT_INCLUDE_URL    
         else:
             new_url = DO_NOT_INCLUDE_URL
 
