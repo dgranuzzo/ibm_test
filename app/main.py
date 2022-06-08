@@ -107,7 +107,8 @@ async def post_url(url: str, background_tasks: BackgroundTasks):
             urls_set = dict_return['urls_set']
 
             background_tasks.add_task(start_crawler,url,urls_set)
-            start_crawler(url,urls_set)
+            # disabled option to call crawler without background task
+            #start_crawler(url,urls_set)
             print(dict_return)
             if dict_return['message'] == MSG_OK:
                 urls_set = dict_return['urls_set']
