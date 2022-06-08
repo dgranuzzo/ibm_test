@@ -114,7 +114,7 @@ async def post_url(url: str, background_tasks: BackgroundTasks):
                 message = """First urls found in {}: {}. 
                             Visit /url_results in a few minutes 
                             to see the results.""".format(url,len(urls_set)) 
-                            
+
                 status = dict_return['status']
             else:
                 message = dict_return['message']
@@ -145,7 +145,7 @@ def get_url():
 
 @app.get("/")
 def read_root():
-    return {"response": "try /url"}
+    return {"response": "try /docs"}
 
 
 @app.get("/test_save_urls")
