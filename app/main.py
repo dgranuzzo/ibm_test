@@ -57,16 +57,28 @@ def recurring_call(initial_url, urls_set, results_set,count=0):
                     results_set.add(url)
        
         count+=1
+
+        # save each iteration in database
+        urls_to_save_tuples_list = []
+        for url_item in new_urls_set:
+            # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
+            urls_to_save_tuples_list.append((initial_url,url_item))
+        
+        if len(urls_to_save_tuples_list) > 0:
+            print("saving in db...")
+            response = SqlDB.save_urls(urls_to_save_tuples_list)
+            print(response)
+        else:
+            print("saving db problem: {}".format(len(urls_to_save_tuples_list)))
         
     # when urls_set is over, call function again with new set of urls
     if count < RECURRENCE_LIMIT:
         print("recurring call ...{}".format(count))
         recurring_call(initial_url, new_urls_set,results_set,count)
 
-    return results_set
+    return 1 #results_set
 
-
-
+ 
 def start_crawler(initial_url,urls_set):
     """
     Start the recurrent function to scrap the url
@@ -78,22 +90,8 @@ def start_crawler(initial_url,urls_set):
     count = 0
     results_set = set()
     # recurring call
-    urls_to_save_set = recurring_call(initial_url, urls_set, results_set, count)
-
-    # save in database array of values (initial_url, found_url)
-    urls_to_save_tuples_list = []
-    for url_item in urls_to_save_set:
-        # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
-        urls_to_save_tuples_list.append((initial_url,url_item))
-    
-    # print save in databse
-    if len(urls_to_save_tuples_list) > 0:
-        # records_list_template = ','.join(['%s'] * len(data))
-        # insert_query = 'insert into t (a, b) values {}'.format(records_list_template)
-        response = SqlDB.save_urls(urls_to_save_tuples_list)
-        print(response)
-    else:
-        print("len problem: {}".format(len(urls_to_save_tuples_list)))
+    result = recurring_call(initial_url, urls_set, results_set, count)
+    return result
         
     
 @app.post("/url")
