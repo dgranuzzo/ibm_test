@@ -58,25 +58,12 @@ def recurring_call(initial_url, urls_set, results_set,count=0):
        
         count+=1
 
-        # save each iteration in database
-        urls_to_save_tuples_list = []
-        for url_item in new_urls_set:
-            # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
-            urls_to_save_tuples_list.append((initial_url,url_item))
-        
-        if len(urls_to_save_tuples_list) > 0:
-            print("saving in db...")
-            response = SqlDB.save_urls(urls_to_save_tuples_list)
-            print(response)
-        else:
-            print("saving db problem: {}".format(len(urls_to_save_tuples_list)))
-        
     # when urls_set is over, call function again with new set of urls
     if count < RECURRENCE_LIMIT:
         print("recurring call ...{}".format(count))
         recurring_call(initial_url, new_urls_set,results_set,count)
 
-    return 1 #results_set
+    return results_set
 
  
 def start_crawler(initial_url,urls_set):
@@ -90,8 +77,20 @@ def start_crawler(initial_url,urls_set):
     count = 0
     results_set = set()
     # recurring call
-    result = recurring_call(initial_url, urls_set, results_set, count)
-    return result
+    final_results_set = recurring_call(initial_url, urls_set, results_set, count)
+    
+    urls_to_save_tuples_list = []
+    for url_item in final_results_set:
+        # array [(initial_url, found_url_1), (initial_url, found_url_2), ...]
+        urls_to_save_tuples_list.append((initial_url,url_item))
+    
+    if len(urls_to_save_tuples_list) > 0:
+        print("saving in db...")
+        response = SqlDB.save_urls(urls_to_save_tuples_list)
+        print(response)
+    else:
+        print("saving db problem: {}".format(len(urls_to_save_tuples_list)))
+
         
     
 @app.post("/url")
