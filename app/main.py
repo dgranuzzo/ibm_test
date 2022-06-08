@@ -30,9 +30,6 @@ config = {
 
 print(config)
 SqlDB = SqlDbClass(config)
-resp = SqlDB.create_url_table()
-print("create table:")
-print(resp)
 
 def recurring_call(initial_url, urls_set, results_set,count=0):
     """
@@ -55,25 +52,17 @@ def recurring_call(initial_url, urls_set, results_set,count=0):
                 if url_item not in results_set:
                     # add only if it is not in results_set yet
                     # results is cumulative
-                    print("ADD URL: {}".format(url_item))
                     new_urls_set.add(url_item)
                     # after that url is searched for new urls, it is appended to results
                     results_set.add(url)
-        
-        print("====================================================")
-        print("count: {} , urls_set: {}".format(count,len(urls_set)))
-        
+       
         count+=1
         
     # when urls_set is over, call function again with new set of urls
-    print('check if going for next recurring call: {}'.format(RECURRENCE_LIMIT))
     if count < RECURRENCE_LIMIT:
         print("recurring call ...{}".format(count))
         recurring_call(initial_url, new_urls_set,results_set,count)
 
-
-
-    print("THE RETURN RECURRING CALL ======")
     return results_set
 
 
@@ -86,13 +75,11 @@ def start_crawler(initial_url,urls_set):
 
     Returns: None
     """
-    print("1. start crawler =====")
     count = 0
     results_set = set()
     # recurring call
     urls_to_save_set = recurring_call(initial_url, urls_set, results_set, count)
 
-    print("=== 2. urls to save tuple ===")
     # save in database array of values (initial_url, found_url)
     urls_to_save_tuples_list = []
     for url_item in urls_to_save_set:
@@ -100,8 +87,6 @@ def start_crawler(initial_url,urls_set):
         urls_to_save_tuples_list.append((initial_url,url_item))
     
     # print save in databse
-    print("SAVE IN DATABASE:")
-    print(urls_to_save_tuples_list)
     if len(urls_to_save_tuples_list) > 0:
         # records_list_template = ','.join(['%s'] * len(data))
         # insert_query = 'insert into t (a, b) values {}'.format(records_list_template)
@@ -121,13 +106,15 @@ async def post_url(url: str, background_tasks: BackgroundTasks):
             dict_return = CrawlerMach.find_urls(url)
             urls_set = dict_return['urls_set']
 
-            #background_tasks.add_task(start_crawler,url,urls_set)
+            background_tasks.add_task(start_crawler,url,urls_set)
             start_crawler(url,urls_set)
-            print("**** return start_crawler: ****")
             print(dict_return)
             if dict_return['message'] == MSG_OK:
                 urls_set = dict_return['urls_set']
-                message = "First urls found in {}: {}".format(url,len(urls_set)) 
+                message = """First urls found in {}: {}. 
+                            Visit /url_results in a few minutes 
+                            to see the results.""".format(url,len(urls_set)) 
+                            
                 status = dict_return['status']
             else:
                 message = dict_return['message']

@@ -1,20 +1,36 @@
 
-Python crawler to scrap a url, get its urls and save in MySQL.
+Python crawler built in Fast API to scrap a url, get its urls and save in database (Postgre).
+
+Then you can retrieve the urls from that given initial url by querying the database. 
 
 To run it using docker (docker desktop on Windows):
 # https://www.docker.com/products/docker-desktop/
 
 
-$ git clone https://github.com/dgranuzzo/ibm_test.git
-$ cd ibm_test
+git clone https://github.com/dgranuzzo/ibm_test.git
+cd ibm_test
 
-# create volumes:
-$ docker volume create mysql
-$ docker volume create mysql_config
+# Create an .env file in the root directory of the project with the variables for the database with the 3 lines below.
+# Change the values of the variables
+POSTGRES_USER=user1
+POSTGRES_PASSWORD=password1
+POSTGRES_DB=urls_db
 
-# create mysqlnet
-$ docker network create mysqlnet
-$ docker-compose build
-$ docker-compose up -d
+# Create an .env file inside the app folder with the 5 lines for the variables for the python app:
+# Change the values of the variables. Variables must match with the .env above.
+server = 'db'
+user='user1'
+password='password1'
+database='urls_db'
+port = 5432
 
 
+# to start the container
+docker-compose -f docker-compose.yml build   
+docker-compose up --detach 
+
+# to stop the container
+docker-compose down 
+
+# Visit: 
+http://localhost/docs
